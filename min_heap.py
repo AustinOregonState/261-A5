@@ -47,7 +47,7 @@ class MinHeap:
             self._heap.append(node)
             return
 
-        # Append node to the end of the priority queue to expand dynamic array if needed
+        # Append node to the end of the priority queue\
         self._heap.append(node)
 
         # Find correct node position in priority queue
@@ -55,18 +55,18 @@ class MinHeap:
         parent_index = (node_index - 1) // 2
         parent_value = self._heap.get_at_index(parent_index)
 
-        # While node is less than parent, and node index is not at the end of the array
-        while node < parent_value and node_index >= 0:
+        while node < parent_value:
+            # Swap
+            self._heap.set_at_index(node_index, parent_value)
+            self._heap.set_at_index(parent_index, node)
+            # Update indices
             node_index = parent_index
             parent_index = (node_index - 1) // 2
-            if parent_index >= 0:   # If node index is 0, parent index will be > 0 at this point
+            # If node not at end of queue, update parent value
+            if parent_index >= 0:
                 parent_value = self._heap.get_at_index(parent_index)
             else:
                 break
-
-        # Insert new node at correct priority queue location
-        self._heap.remove_at_index(self._heap.length() - 1)  # Remove new node at the end of the queue
-        self._heap.insert_at_index(node_index, node)
 
     def is_empty(self) -> bool:
         """
@@ -78,51 +78,137 @@ class MinHeap:
 
     def get_min(self) -> object:
         """
-        TODO: Write this implementation
+        Returns the minimum key
         """
-        pass
+        return self._heap[0]
 
     def remove_min(self) -> object:
         """
-        TODO: Write this implementation
+        Returns an object with the minimum key, andd removes it from the heap. If the
+        heap is empty, the method raises a MinHeapException
         """
-        pass
+        if self._heap.is_empty():
+            raise MinHeapException
+
+        # Heap contains only one value
+        min_value = self._heap[0]
+        if self._heap.length() == 1:
+            self.clear()
+            return min_value
+
+        # Find successor
+        successor = self._heap.get_at_index(self._heap.length() - 1)
+        self._heap.remove_at_index(self._heap.length() - 1)  # Remove successor at end of heap
+        self._heap[0] = successor  # Overwrite current MinKey with successor
+
+        # Percolate new successor down
+        _percolate_down(self._heap, 0)
+
+        return min_value
 
     def build_heap(self, da: DynamicArray) -> None:
         """
-        TODO: Write this implementation
+        Overwrites the current heap, and creates a new one with the given dynamic aray
         """
+        self.clear()
+
+        for node in da:
+            self.add(node)
         pass
 
     def size(self) -> int:
         """
-        TODO: Write this implementation
+        Returns the size of the heap
         """
-        pass
+        return self._heap.length()
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Clears the heap
         """
-        pass
+        self._heap = DynamicArray()
 
 
 def heapsort(da: DynamicArray) -> None:
     """
-    TODO: Write this implementation
+    Takes a dynamic array, creates a valid heap out of it, then completes heap sort
     """
-    pass
+    # Create a valid heap
+    node_index = ((da.length() - 1) // 2) - 1  # Find first node to check
+    while node_index >= 0:
+        _percolate_down(da, node_index)
+        node_index -= 1
 
+    print(da)
 
-# It's highly recommended that you implement the following optional          #
-# helper function for percolating elements down the MinHeap. You can call    #
-# this from inside the MinHeap class. You may edit the function definition.  #
+    # Heapsort
+    swap_index = da.length() - 1
+    while swap_index >= 0:
+        # Swap nodes
+        swap_value = da.get_at_index(swap_index)
+        da.set_at_index(swap_index, da.get_at_index(0))
+        da.set_at_index(0, swap_value)
+        _percolate_down(da, 0)
+        # Decrement swap_index
+        print(da)
+        swap_index -= 1
+
 
 def _percolate_down(da: DynamicArray, parent: int) -> None:
     """
-    Percolates an element at the end of the queue to its correct sport in the MinHeap
+    Percolates an element of the queue to its correct spot in the MinHeap
     """
-    pass
+    if da.is_empty():
+        raise MinHeapException
+
+    node_index = parent
+    node_value = da.get_at_index(parent)
+
+    # Initiate children values
+    left_child_index = (node_index * 2) + 1
+    right_child_index = (node_index * 2) + 2
+    left_child = None
+    right_child = None
+    if left_child_index < da.length():
+        left_child = da.get_at_index(left_child_index)
+    if right_child_index < da.length():
+        right_child = da.get_at_index(right_child_index)
+
+    while left_child or right_child:
+        # Both children exist
+        if left_child and right_child:
+            if (left_child < right_child or left_child == right_child) and left_child < node_value:  # Left Swap
+                da.set_at_index(left_child_index, node_value)
+                da.set_at_index(node_index, left_child)
+                node_index = left_child_index  # Update node index
+            elif right_child < node_value:
+                da.set_at_index(right_child_index, node_value)
+                da.set_at_index(node_index, right_child)
+                node_index = right_child_index  # Update node index
+            else:  # Left and right child are greater than node
+                break
+        # Only one child exists
+        elif left_child and left_child < node_value:  # Left child swap
+            da.set_at_index(left_child_index, node_value)
+            da.set_at_index(node_index, left_child)
+            node_index = left_child_index  # Update node index
+        elif right_child and right_child < node_value:  # Right child swap
+            da.set_at_index(right_child_index, node_value)
+            da.set_at_index(node_index, right_child)
+            node_index = right_child_index  # Update node index
+        else:   # End of heap reached
+            break
+
+        # Update node and children values
+        node_value = da.get_at_index(node_index)
+        left_child_index = (node_index * 2) + 1
+        right_child_index = (node_index * 2) + 2
+        left_child = None
+        right_child = None
+        if left_child_index < da.length():
+            left_child = da.get_at_index(left_child_index)
+        if right_child_index < da.length():
+            right_child = da.get_at_index(right_child_index)
 
 
 # ------------------- BASIC TESTING -----------------------------------------
@@ -130,90 +216,97 @@ def _percolate_down(da: DynamicArray, parent: int) -> None:
 
 if __name__ == '__main__':
 
-    print("\nPDF - add example 1")
-    print("-------------------")
-    h = MinHeap()
-    print(h, h.is_empty())
-    for value in range(300, 200, -15):
-        h.add(value)
-        print(h)
-
-    print("\nPDF - add example 2")
-    print("-------------------")
-    h = MinHeap(['fish', 'bird'])
-    print(h)
-    for value in ['monkey', 'zebra', 'elephant', 'horse', 'bear']:
-        h.add(value)
-        print(h)
-
-    print("\nPDF - is_empty example 1")
-    print("-------------------")
-    h = MinHeap([2, 4, 12, 56, 8, 34, 67])
-    print(h.is_empty())
-
-    print("\nPDF - is_empty example 2")
-    print("-------------------")
-    h = MinHeap()
-    print(h.is_empty())
-
-    print("\nPDF - get_min example 1")
-    print("-----------------------")
-    h = MinHeap(['fish', 'bird'])
-    print(h)
-    print(h.get_min(), h.get_min())
-
+    # print("\nPDF - add example 1")
+    # print("-------------------")
+    # h = MinHeap()
+    # print(h, h.is_empty())
+    # for value in range(300, 200, -15):
+    #     h.add(value)
+    #     print(h)
+    #
+    # print("\nPDF - add example 2")
+    # print("-------------------")
+    # h = MinHeap(['fish', 'bird'])
+    # print(h)
+    # for value in ['monkey', 'zebra', 'elephant', 'horse', 'bear']:
+    #     h.add(value)
+    #     print(h)
+    #
+    # print("\nPDF - is_empty example 1")
+    # print("-------------------")
+    # h = MinHeap([2, 4, 12, 56, 8, 34, 67])
+    # print(h.is_empty())
+    #
+    # print("\nPDF - is_empty example 2")
+    # print("-------------------")
+    # h = MinHeap()
+    # print(h.is_empty())
+    #
+    # print("\nPDF - get_min example 1")
+    # print("-----------------------")
+    # h = MinHeap(['fish', 'bird'])
+    # print(h)
+    # print(h.get_min(), h.get_min())
+    #
     # print("\nPDF - remove_min example 1")
     # print("--------------------------")
     # h = MinHeap([1, 10, 2, 9, 3, 8, 4, 7, 5, 6])
     # while not h.is_empty() and h.is_empty() is not None:
     #     print(h, end=' ')
     #     print(h.remove_min())
-
-    print("\nPDF - build_heap example 1")
-    print("--------------------------")
-    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    h = MinHeap(['zebra', 'apple'])
-    print(h)
-    h.build_heap(da)
-    print(h)
-
-    print("--------------------------")
-    print("Inserting 500 into input DA:")
-    da[0] = 500
-    print(da)
-
-    print("Your MinHeap:")
-    print(h)
-    if h.get_min() == 500:
-        print("Error: input array and heap's underlying DA reference same object in memory")
-
-    print("\nPDF - size example 1")
-    print("--------------------")
-    h = MinHeap([100, 20, 6, 200, 90, 150, 300])
-    print(h.size())
-
-    print("\nPDF - size example 2")
-    print("--------------------")
-    h = MinHeap([])
-    print(h.size())
-
-    print("\nPDF - clear example 1")
-    print("---------------------")
-    h = MinHeap(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
-    print(h)
-    print(h.clear())
-    print(h)
-
+    #
+    # print("\nPDF - build_heap example 1")
+    # print("--------------------------")
+    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    # h = MinHeap(['zebra', 'apple'])
+    # print(h)
+    # h.build_heap(da)
+    # print(h)
+    #
+    # print("--------------------------")
+    # print("Inserting 500 into input DA:")
+    # da[0] = 500
+    # print(da)
+    #
+    # print("Your MinHeap:")
+    # print(h)
+    # if h.get_min() == 500:
+    #     print("Error: input array and heap's underlying DA reference same object in memory")
+    #
+    # print("\nPDF - size example 1")
+    # print("--------------------")
+    # h = MinHeap([100, 20, 6, 200, 90, 150, 300])
+    # print(h.size())
+    #
+    # print("\nPDF - size example 2")
+    # print("--------------------")
+    # h = MinHeap([])
+    # print(h.size())
+    #
+    # print("\nPDF - clear example 1")
+    # print("---------------------")
+    # h = MinHeap(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
+    # print(h)
+    # print(h.clear())
+    # print(h)
+    #
     print("\nPDF - heapsort example 1")
     print("------------------------")
-    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    da = DynamicArray([5, 2, 11, 8, 6, 20, 1, 3, 7])
     print(f"Before: {da}")
     heapsort(da)
     print(f"After:  {da}")
 
-    print("\nPDF - heapsort example 2")
-    print("------------------------")
-    da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
-    print(f"Before: {da}")
-    heapsort(da)
-    print(f"After:  {da}")
+    # print("\nPDF - heapsort example 1")
+    # print("------------------------")
+    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    # print(f"Before: {da}")
+    # heapsort(da)
+    # print(f"After:  {da}")
+    #
+    # print("\nPDF - heapsort example 2")
+    # print("------------------------")
+    # da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
+    # print(f"Before: {da}")
+    # heapsort(da)
+    # print(f"After:  {da}")
