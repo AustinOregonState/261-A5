@@ -164,7 +164,7 @@ def _percolate_down_heap_sort(da: DynamicArray, end_of_sort_index) -> None:
     # Percolate down always starts at index 0
     node_index = 0
     node_value = da.get_at_index(node_index)
-    end_of_sort_index -= 1  # Ignore the last index of the heap
+    # end_of_sort_index -= 1  # Ignore the last index of the heap
 
     # Initiate children values
     left_child_index = (node_index * 2) + 1
@@ -175,6 +175,17 @@ def _percolate_down_heap_sort(da: DynamicArray, end_of_sort_index) -> None:
         left_child = da.get_at_index(left_child_index)
     if right_child_index < da.length():
         right_child = da.get_at_index(right_child_index)
+
+    # Edge case for final node
+    if end_of_sort_index == 1:
+        if left_child and left_child > node_value:  # Left swap
+            da.set_at_index(left_child_index, node_value)
+            da.set_at_index(node_index, left_child)
+        elif right_child and right_child > node_value:  # Right swap
+            da.set_at_index(right_child_index, node_value)
+            da.set_at_index(node_index, right_child)
+        else:
+            return
 
     while left_child or right_child:
         # Both children exist
@@ -383,12 +394,12 @@ if __name__ == '__main__':
     # heapsort(da)
     # print(f"After:  {da}")
 
-    # print("\nPDF - heapsort example 1")
-    # print("------------------------")
-    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    # print(f"Before: {da}")
-    # heapsort(da)
-    # print(f"After:  {da}")
+    print("\nPDF - heapsort example 1")
+    print("------------------------")
+    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    print(f"Before: {da}")
+    heapsort(da)
+    print(f"After:  {da}")
     #
     # print("\nPDF - heapsort example 2")
     # print("------------------------")
