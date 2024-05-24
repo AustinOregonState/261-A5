@@ -144,7 +144,7 @@ def heapsort(da: DynamicArray) -> None:
 
     # Heapsort
     last_index = da.length() - 1
-    while last_index > 1:
+    while last_index > 0:
         # Swap first and last nodes
         last_value = da.get_at_index(last_index)
         da.set_at_index(last_index, da.get_at_index(0))
@@ -325,22 +325,22 @@ if __name__ == '__main__':
     #     print(h, end=' ')
     #     print(h.remove_min())
     #
-    print("\nPDF - build_heap example random")
-    print("--------------------------")
-    da = DynamicArray([-530, 71164, 62383, 39083, -87538, 25270, -16366, 39083, -530, 89498, 79887, -14127])
-    h = MinHeap(['zebra', 'apple'])
-    print(h)
-    h.build_heap(da)
-    print(h)
-    print("Should be: [-87538, -530, -16366, -530, 71164, -14127, 62383, 39083, 39083, 89498, 79887, 25270]")
+    # print("\nPDF - build_heap example random")
+    # print("--------------------------")
+    # da = DynamicArray([-530, 71164, 62383, 39083, -87538, 25270, -16366, 39083, -530, 89498, 79887, -14127])
+    # h = MinHeap(['zebra', 'apple'])
+    # print(h)
+    # h.build_heap(da)
+    # print(h)
+    # print("Should be: [-87538, -530, -16366, -530, 71164, -14127, 62383, 39083, 39083, 89498, 79887, 25270]")
 
-    print("\nPDF - build_heap example 1")
-    print("--------------------------")
-    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    h = MinHeap(['zebra', 'apple'])
-    print(h)
-    h.build_heap(da)
-    print(h)
+    # print("\nPDF - build_heap example 1")
+    # print("--------------------------")
+    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    # h = MinHeap(['zebra', 'apple'])
+    # print(h)
+    # h.build_heap(da)
+    # print(h)
     #
     # print("--------------------------")
     # print("Inserting 500 into input DA:")
@@ -369,6 +369,13 @@ if __name__ == '__main__':
     # print(h.clear())
     # print(h)
     # #
+    print("\nPDF - heapsort example random")
+    print("------------------------")
+    da = DynamicArray(["qYh`MQwrpZv", "ANoghcwSl", "bHTVQbc", "OTeD"])
+    print(f"Before: {da}")
+    heapsort(da)
+    print(f"After:  {da}")
+
     # print("\nPDF - heapsort example 1")
     # print("------------------------")
     # da = DynamicArray([5, 2, 11, 8, 6, 20, 1, 3, 7])
