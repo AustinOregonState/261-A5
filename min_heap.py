@@ -82,7 +82,9 @@ class MinHeap:
         """
         Returns the minimum key
         """
-        return self._heap[0]
+        if self._heap.is_empty():
+            raise MinHeapException
+        return self._heap.get_at_index(0)
 
     def remove_min(self) -> object:
         """
@@ -114,10 +116,10 @@ class MinHeap:
         """
         self.clear()
         # Input da into cleared heap
-        for index in range(self._heap.length()):
-            self._heap.set_at_index(index, da.get_at_index(index))
+        for index in range(da.length()):
+            self._heap.insert_at_index(index, da.get_at_index(index))
         # Create valid MinHeap (not a MinHeap object) from da
-        heapify(da)
+        heapify(self._heap)
 
 
     def size(self) -> int:
@@ -323,13 +325,13 @@ if __name__ == '__main__':
     #     print(h, end=' ')
     #     print(h.remove_min())
     #
-    # print("\nPDF - build_heap example 1")
-    # print("--------------------------")
-    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    # h = MinHeap(['zebra', 'apple'])
-    # print(h)
-    # h.build_heap(da)
-    # print(h)
+    print("\nPDF - build_heap example 1")
+    print("--------------------------")
+    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    h = MinHeap(['zebra', 'apple'])
+    print(h)
+    h.build_heap(da)
+    print(h)
     #
     # print("--------------------------")
     # print("Inserting 500 into input DA:")
@@ -365,16 +367,16 @@ if __name__ == '__main__':
     # heapsort(da)
     # print(f"After:  {da}")
 
-    print("\nPDF - heapsort example 1")
-    print("------------------------")
-    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    print(f"Before: {da}")
-    heapsort(da)
-    print(f"After:  {da}")
-
-    print("\nPDF - heapsort example 2")
-    print("------------------------")
-    da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
-    print(f"Before: {da}")
-    heapsort(da)
-    print(f"After:  {da}")
+    # print("\nPDF - heapsort example 1")
+    # print("------------------------")
+    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    # print(f"Before: {da}")
+    # heapsort(da)
+    # print(f"After:  {da}")
+    #
+    # print("\nPDF - heapsort example 2")
+    # print("------------------------")
+    # da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
+    # print(f"Before: {da}")
+    # heapsort(da)
+    # print(f"After:  {da}")
