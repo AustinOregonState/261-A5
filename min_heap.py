@@ -112,10 +112,13 @@ class MinHeap:
         """
         Overwrites the current heap, and creates a new one with the given dynamic aray
         """
+        self.clear()
+        # Input da into cleared heap
+        for index in range(self._heap.length()):
+            self._heap.set_at_index(index, da.get_at_index(index))
         # Create valid MinHeap (not a MinHeap object) from da
         heapify(da)
-        # Overwrite old heap
-        self._heap = da
+
 
     def size(self) -> int:
         """
