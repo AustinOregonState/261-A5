@@ -276,7 +276,7 @@ def heapify(da: DynamicArray) -> None:
     Takes a dynamic array and creates a valid MinHeap out of it
     """
     # Create a valid heap
-    node_index = ((da.length() - 1) // 2) - 1  # Find first node to check
+    node_index = ((da.length() - 1) // 2)  # Find first node to check
     while node_index >= 0:  # Percolate nodes down
         _percolate_down(da, node_index)
         node_index -= 1
@@ -325,6 +325,15 @@ if __name__ == '__main__':
     #     print(h, end=' ')
     #     print(h.remove_min())
     #
+    print("\nPDF - build_heap example random")
+    print("--------------------------")
+    da = DynamicArray([-530, 71164, 62383, 39083, -87538, 25270, -16366, 39083, -530, 89498, 79887, -14127])
+    h = MinHeap(['zebra', 'apple'])
+    print(h)
+    h.build_heap(da)
+    print(h)
+    print("Should be: [-87538, -530, -16366, -530, 71164, -14127, 62383, 39083, 39083, 89498, 79887, 25270]")
+
     print("\nPDF - build_heap example 1")
     print("--------------------------")
     da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
