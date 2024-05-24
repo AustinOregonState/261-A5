@@ -3,7 +3,9 @@
 # Course: CS261 - Data Structures
 # Assignment: A5: MinHeap Implementation
 # Due Date: 5/28/2024
-# Description:
+# Description: MinHeap class that has an add and remove function that auto-balances the heap. A get_min,
+# size, and clear method. It also has a build_heap method that will build a MinHeap from an invalid heap
+# array. There is also an outside function that will use a heapsort to sort an unsorted array.
 
 
 from dynamic_array import *
@@ -110,11 +112,10 @@ class MinHeap:
         """
         Overwrites the current heap, and creates a new one with the given dynamic aray
         """
-        self.clear()
-
-        for node in da:
-            self.add(node)
-        pass
+        # Create valid MinHeap (not a MinHeap object) from da
+        heapify(da)
+        # Overwrite old heap
+        self._heap = da
 
     def size(self) -> int:
         """
@@ -133,25 +134,79 @@ def heapsort(da: DynamicArray) -> None:
     """
     Takes a dynamic array, creates a valid heap out of it, then completes heap sort
     """
-    # Create a valid heap
-    node_index = ((da.length() - 1) // 2) - 1  # Find first node to check
-    while node_index >= 0:
-        _percolate_down(da, node_index)
-        node_index -= 1
-
-    print(da)
+    # Create a valid MinHeap
+    heapify(da)
 
     # Heapsort
-    swap_index = da.length() - 1
-    while swap_index >= 0:
-        # Swap nodes
-        swap_value = da.get_at_index(swap_index)
-        da.set_at_index(swap_index, da.get_at_index(0))
-        da.set_at_index(0, swap_value)
-        _percolate_down(da, 0)
-        # Decrement swap_index
-        print(da)
-        swap_index -= 1
+    last_index = da.length() - 1
+    while last_index > 1:
+        # Swap first and last nodes
+        last_value = da.get_at_index(last_index)
+        da.set_at_index(last_index, da.get_at_index(0))
+        da.set_at_index(0, last_value)
+        _percolate_down_heap_sort(da, last_index)  # Percolate down to > last_index
+        # Decrement last_index
+        last_index -= 1
+
+
+def _percolate_down_heap_sort(da: DynamicArray, end_of_sort_index) -> None:
+    """
+    Percolates down a heap until it can no longer, or it reaches the end of the sort index.
+    """
+    if da.is_empty():
+        raise MinHeapException
+
+    # Percolate down always starts at index 0
+    node_index = 0
+    node_value = da.get_at_index(node_index)
+    end_of_sort_index -= 1  # Ignore the last index of the heap
+
+    # Initiate children values
+    left_child_index = (node_index * 2) + 1
+    right_child_index = (node_index * 2) + 2
+    left_child = None
+    right_child = None
+    if left_child_index < da.length():
+        left_child = da.get_at_index(left_child_index)
+    if right_child_index < da.length():
+        right_child = da.get_at_index(right_child_index)
+
+    while left_child or right_child:
+        # Both children exist
+        if left_child and right_child:
+            if (left_child < right_child or left_child == right_child) and left_child < node_value and \
+                    left_child_index < end_of_sort_index:  # Left Swap
+                da.set_at_index(left_child_index, node_value)
+                da.set_at_index(node_index, left_child)
+                node_index = left_child_index  # Update node index
+            elif right_child < node_value and right_child_index < end_of_sort_index:
+                da.set_at_index(right_child_index, node_value)
+                da.set_at_index(node_index, right_child)
+                node_index = right_child_index  # Update node index
+            else:  # Left and right child are greater than node
+                break
+        # Only one child exists
+        elif left_child and left_child < node_value and left_child_index < end_of_sort_index:  # Left child swap
+            da.set_at_index(left_child_index, node_value)
+            da.set_at_index(node_index, left_child)
+            node_index = left_child_index  # Update node index
+        elif right_child and right_child < node_value and right_child_index < end_of_sort_index:  # Right child swap
+            da.set_at_index(right_child_index, node_value)
+            da.set_at_index(node_index, right_child)
+            node_index = right_child_index  # Update node index
+        else:  # End of heap reached
+            break
+
+        # Update node and children values
+        node_value = da.get_at_index(node_index)
+        left_child_index = (node_index * 2) + 1
+        right_child_index = (node_index * 2) + 2
+        left_child = None
+        right_child = None
+        if left_child_index < da.length():
+            left_child = da.get_at_index(left_child_index)
+        if right_child_index < da.length():
+            right_child = da.get_at_index(right_child_index)
 
 
 def _percolate_down(da: DynamicArray, parent: int) -> None:
@@ -196,7 +251,7 @@ def _percolate_down(da: DynamicArray, parent: int) -> None:
             da.set_at_index(right_child_index, node_value)
             da.set_at_index(node_index, right_child)
             node_index = right_child_index  # Update node index
-        else:   # End of heap reached
+        else:  # End of heap reached
             break
 
         # Update node and children values
@@ -211,11 +266,21 @@ def _percolate_down(da: DynamicArray, parent: int) -> None:
             right_child = da.get_at_index(right_child_index)
 
 
+def heapify(da: DynamicArray) -> None:
+    """
+    Takes a dynamic array and creates a valid MinHeap out of it
+    """
+    # Create a valid heap
+    node_index = ((da.length() - 1) // 2) - 1  # Find first node to check
+    while node_index >= 0:  # Percolate nodes down
+        _percolate_down(da, node_index)
+        node_index -= 1
+
+
 # ------------------- BASIC TESTING -----------------------------------------
 
 
 if __name__ == '__main__':
-
     # print("\nPDF - add example 1")
     # print("-------------------")
     # h = MinHeap()
@@ -289,24 +354,24 @@ if __name__ == '__main__':
     # print(h)
     # print(h.clear())
     # print(h)
-    #
+    # #
+    # print("\nPDF - heapsort example 1")
+    # print("------------------------")
+    # da = DynamicArray([5, 2, 11, 8, 6, 20, 1, 3, 7])
+    # print(f"Before: {da}")
+    # heapsort(da)
+    # print(f"After:  {da}")
+
     print("\nPDF - heapsort example 1")
     print("------------------------")
-    da = DynamicArray([5, 2, 11, 8, 6, 20, 1, 3, 7])
+    da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
     print(f"Before: {da}")
     heapsort(da)
     print(f"After:  {da}")
 
-    # print("\nPDF - heapsort example 1")
-    # print("------------------------")
-    # da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
-    # print(f"Before: {da}")
-    # heapsort(da)
-    # print(f"After:  {da}")
-    #
-    # print("\nPDF - heapsort example 2")
-    # print("------------------------")
-    # da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
-    # print(f"Before: {da}")
-    # heapsort(da)
-    # print(f"After:  {da}")
+    print("\nPDF - heapsort example 2")
+    print("------------------------")
+    da = DynamicArray(['monkey', 'zebra', 'elephant', 'horse', 'bear'])
+    print(f"Before: {da}")
+    heapsort(da)
+    print(f"After:  {da}")
